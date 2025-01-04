@@ -26,3 +26,75 @@ Resources:
           - Effect: 'Allow'
             Action: '*'
             Resource: 'arn:aws:s3:::new-s3-bucket-24-12-2024'
+
+
+          //**Morever
+Below is an example of a CloudFormation template written in YAML to create a VPC in AWS:
+
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS CloudFormation Template to Create a VPC'
+
+Resources:
+  MyVPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: '10.0.0.0/16'
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      Tags:
+        - Key: 'Name'
+          Value: 'MyVPC'
+
+  MyInternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: 'Name'
+          Value: 'MyInternetGateway'
+
+  AttachGateway:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref MyVPC
+      InternetGatewayId: !Ref MyInternetGateway
+
+  MySubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: '10.0.1.0/24'
+      AvailabilityZone: 'us-east-1a'
+      Tags:
+        - Key: 'Name'
+          Value: 'MySubnet'
+
+  MyRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: 'Name'
+          Value: 'MyRouteTable'
+
+  MyRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref MyRouteTable
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref MyInternetGateway
+
+  MySubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref MySubnet
+      RouteTableId: !Ref MyRouteTable
+
+Outputs:
+  VPCId:
+    Description: 'The VPC ID'
+    Value: !Ref MyVPC
+  SubnetId:
+    Description: 'The Subnet ID'
+    Value: !Ref MySubnet
+
+            
